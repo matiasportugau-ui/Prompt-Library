@@ -303,7 +303,12 @@ class PromptIngester:
             "prompt_type": classification.get("prompt_type", "user_prompt"),
             "keywords": classification.get("keywords", []),
             "version": classification.get("version"),
-            "language": classification.get("language", "mixed"),
+            # MongoDB text indexes don't support "mixed" - default to Spanish
+            "language": (
+                "es"
+                if classification.get("language") == "mixed"
+                else classification.get("language", "es")
+            ),
             "quality_score": classification.get("quality_score", 0.5),
             "size_bytes": prompt.size_bytes,
             "created_at": prompt.modified_at or datetime.utcnow(),
